@@ -56,11 +56,6 @@ class ControlNetPreprocessor:
     ):
         print(f"Initializing {detector_class.__name__}")
         if hasattr(detector_class, "from_pretrained"):
-            # temporary special case for anyline, skip cache
-            if model_name == "TheMistoAI/MistoLine":
-                return detector_class.from_pretrained(
-                    "TheMistoAI/MistoLine", filename="MTEED.pth", subfolder="Anyline"
-                )
             return detector_class.from_pretrained(
                 model_name,
                 cache_dir=CONTROLNET_PREPROCESSOR_MODEL_CACHE,
@@ -78,7 +73,10 @@ class ControlNetPreprocessor:
             if annotator == "lineart_anyline":
                 # temporary special case for Anyline, which requires a different model
                 self.annotators[annotator] = self.initialize_detector(
-                    self.ANNOTATOR_CLASSES[annotator], model_name="TheMistoAI/MistoLine"
+                    self.ANNOTATOR_CLASSES[annotator],
+                    model_name="TheMistoAI/MistoLine",
+                    filename="MTEED.pth",
+                    subfolder="Anyline",
                 )
             else:
                 self.annotators[annotator] = self.initialize_detector(

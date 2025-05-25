@@ -50,12 +50,9 @@ class ControlNet:
                 self.models[controlnet_name] = self.initialize_controlnet(
                     "diffusers/controlnet-depth-sdxl-1.0-small"
                 )
-            # temporary special case for anyline, skip cache
             elif controlnet_name == "lineart_anyline":
-                self.models[controlnet_name] = ControlNetModel.from_pretrained(
-                    "TheMistoAI/MistoLine",
-                    torch_dtype=torch.float16,
-                    variant="fp16",
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "TheMistoAI/MistoLine"
                 )
             elif controlnet_name.startswith("soft_edge") or controlnet_name.startswith(
                 "lineart"
