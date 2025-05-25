@@ -9,6 +9,7 @@ from controlnet_aux import (
     LineartAnimeDetector,
     CannyDetector,
     LeresDetector,
+    AnylineDetector,
 )
 
 CONTROLNET_PREPROCESSOR_MODEL_CACHE = "./controlnet-preprocessor-cache"
@@ -25,6 +26,7 @@ class ControlNetPreprocessor:
         "soft_edge_hed": HEDdetector,
         "lineart": LineartDetector,
         "lineart_anime": LineartAnimeDetector,
+        "lineart_anyline": AnylineDetector,
         "openpose": OpenposeDetector,
         # "straight_edge_mlsd": None,
         # "face_detector": None,
@@ -53,7 +55,12 @@ class ControlNetPreprocessor:
         self, detector_class, model_name="lllyasviel/Annotators", **kwargs
     ):
         print(f"Initializing {detector_class.__name__}")
-        if hasattr(detector_class, 'from_pretrained'):
+        if hasattr(detector_class, "from_pretrained"):
+            # temporary special case for anyline, skip cache
+            if model_name == "TheMistoAI/MistoLine":
+                return detector_class.from_pretrained(
+                    "TheMistoAI/MistoLine", filename="MTEED.pth", subfolder="Anyline"
+                )
             return detector_class.from_pretrained(
                 model_name,
                 cache_dir=CONTROLNET_PREPROCESSOR_MODEL_CACHE,
@@ -68,7 +75,13 @@ class ControlNetPreprocessor:
     def process_image(self, image, annotator):
         print(f"Processing image with {annotator}")
         if annotator not in self.annotators:
-            self.annotators[annotator] = self.initialize_detector(
-                self.ANNOTATOR_CLASSES[annotator]
-            )
+            if annotator == "lineart_anyline":
+                # temporary special case for Anyline, which requires a different model
+                self.annotators[annotator] = self.initialize_detector(
+                    self.ANNOTATOR_CLASSES[annotator], model_name="TheMistoAI/MistoLine"
+                )
+            else:
+                self.annotators[annotator] = self.initialize_detector(
+                    self.ANNOTATOR_CLASSES[annotator]
+                )
         return self.annotators[annotator](image)

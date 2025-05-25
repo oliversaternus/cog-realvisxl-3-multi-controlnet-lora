@@ -18,6 +18,7 @@ class ControlNet:
         "soft_edge_hed",
         "lineart",
         "lineart_anime",
+        "lineart_anyline",
         "openpose",
         # Preprocessors without an XL model yet
         # "straight_edge_mlsd",
@@ -42,15 +43,34 @@ class ControlNet:
     def get_model(self, controlnet_name):
         if controlnet_name not in self.models:
             if controlnet_name.startswith("edge_"):
-                self.models[controlnet_name] = self.initialize_controlnet("diffusers/controlnet-canny-sdxl-1.0")
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "diffusers/controlnet-canny-sdxl-1.0"
+                )
             elif controlnet_name.startswith("depth_"):
-                self.models[controlnet_name] = self.initialize_controlnet("diffusers/controlnet-depth-sdxl-1.0-small")
-            elif controlnet_name.startswith("soft_edge") or controlnet_name.startswith("lineart"):
-                self.models[controlnet_name] = self.initialize_controlnet("SargeZT/controlnet-sd-xl-1.0-softedge-dexined")
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "diffusers/controlnet-depth-sdxl-1.0-small"
+                )
+            elif controlnet_name.startswith("soft_edge") or controlnet_name.startswith(
+                "lineart"
+            ):
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "SargeZT/controlnet-sd-xl-1.0-softedge-dexined"
+                )
             elif controlnet_name == "openpose":
-                self.models[controlnet_name] = self.initialize_controlnet("thibaud/controlnet-openpose-sdxl-1.0")
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "thibaud/controlnet-openpose-sdxl-1.0"
+                )
             elif controlnet_name == "illusion":
-                self.models[controlnet_name] = self.initialize_controlnet("monster-labs/control_v1p_sdxl_qrcode_monster")
+                self.models[controlnet_name] = self.initialize_controlnet(
+                    "monster-labs/control_v1p_sdxl_qrcode_monster"
+                )
+            # temporary special case for anyline, skip cache
+            elif controlnet_name == "lineart_anyline":
+                self.models[controlnet_name] = ControlNetModel.from_pretrained(
+                    "TheMistoAI/MistoLine",
+                    torch_dtype=torch.float16,
+                    variant="fp16",
+                )
         return self.models.get(controlnet_name)
 
     def get_models(self, controlnet_names):
