@@ -50,6 +50,13 @@ class ControlNet:
                 self.models[controlnet_name] = self.initialize_controlnet(
                     "diffusers/controlnet-depth-sdxl-1.0-small"
                 )
+            # temporary special case for anyline, skip cache
+            elif controlnet_name == "lineart_anyline":
+                self.models[controlnet_name] = ControlNetModel.from_pretrained(
+                    "TheMistoAI/MistoLine",
+                    torch_dtype=torch.float16,
+                    variant="fp16",
+                )
             elif controlnet_name.startswith("soft_edge") or controlnet_name.startswith(
                 "lineart"
             ):
@@ -63,13 +70,6 @@ class ControlNet:
             elif controlnet_name == "illusion":
                 self.models[controlnet_name] = self.initialize_controlnet(
                     "monster-labs/control_v1p_sdxl_qrcode_monster"
-                )
-            # temporary special case for anyline, skip cache
-            elif controlnet_name == "lineart_anyline":
-                self.models[controlnet_name] = ControlNetModel.from_pretrained(
-                    "TheMistoAI/MistoLine",
-                    torch_dtype=torch.float16,
-                    variant="fp16",
                 )
         return self.models.get(controlnet_name)
 
