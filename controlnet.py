@@ -51,8 +51,12 @@ class ControlNet:
                     "diffusers/controlnet-depth-sdxl-1.0-small"
                 )
             elif controlnet_name == "lineart_anyline":
-                self.models[controlnet_name] = self.initialize_controlnet(
-                    "TheMistoAI/MistoLine"
+                print("Initializing TheMistoAI/MistoLine")
+                self.models[controlnet_name] = ControlNetModel.from_pretrained(
+                    "TheMistoAI/MistoLine",
+                    cache_dir=CONTROLNET_MODEL_CACHE,
+                    torch_dtype=torch.float16,
+                    variant="fp16",
                 )
             elif controlnet_name.startswith("soft_edge") or controlnet_name.startswith(
                 "lineart"

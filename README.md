@@ -1,8 +1,11 @@
 # RealVisXL V3.0 with multi ControlNet and custom Loras
 
-https://replicate.com/fofr/realvisxl-v3-multi-controlnet-lora
+Fork of https://github.com/fofr/cog-realvisxl-3-multi-controlnet-lora
+with additional anyline controlnet and local weights loader script.
 
-[![Replicate demo and cloud API](https://replicate.com/fofr/realvisxl-v3-multi-controlnet-lora/badge)](https://replicate.com/fofr/realvisxl-v3-multi-controlnet-lora)
+Before pushing model, load the weights by executing `cog run python download-weights-local.py`
+
+Using anyline controlnet from https://huggingface.co/TheMistoAI/MistoLine
 
 RealVis XL V3.0 with:
 
@@ -19,6 +22,7 @@ RealVis XL V3.0 with:
   - QR Monster (illusions)
   - lineart
   - lineart anime
+  - lineart anyline
 - img2img plus controlnet
 - inpainting plus controlnet
 - controlnet conditioning strengths

@@ -15,6 +15,7 @@ from controlnet_aux import (
 CONTROLNET_PREPROCESSOR_MODEL_CACHE = "./controlnet-preprocessor-cache"
 CONTROLNET_PREPROCESSOR_URL = "https://weights.replicate.delivery/default/controlnet/cn-preprocess-leres-midas-pidi-hed-lineart-openpose.tar"
 
+ANYLINE_PREPROCESSOR_MODEL_PATH = "./anyline-detector-weights"
 
 class ControlNetPreprocessor:
     ANNOTATOR_CLASSES = {
@@ -71,13 +72,10 @@ class ControlNetPreprocessor:
         print(f"Processing image with {annotator}")
         if annotator not in self.annotators:
             if annotator == "lineart_anyline":
-                # temporary special case for Anyline, which requires a different model
-                self.annotators[annotator] = self.initialize_detector(
-                    self.ANNOTATOR_CLASSES[annotator],
-                    model_name="TheMistoAI/MistoLine",
-                    filename="MTEED.pth",
-                    subfolder="Anyline",
-                )
+                # special case for Anyline, which currently does not support cache_dir
+                # loading model from local path
+                print(f"Initializing Anyline preprocessor")
+                self.annotators[annotator] = AnylineDetector.from_pretrained(ANYLINE_PREPROCESSOR_MODEL_PATH,filename="MTEED.pth")
             else:
                 self.annotators[annotator] = self.initialize_detector(
                     self.ANNOTATOR_CLASSES[annotator]
